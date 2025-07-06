@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-TddApplication<hhplus-tdd-java>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "io.hhplus.tdd.TddApplication",
+      "projectName": "hhplus-tdd-java",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
