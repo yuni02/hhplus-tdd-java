@@ -50,45 +50,57 @@ public class PointService {
     /**
      * 포인트 충전
      * 
-     * 1. 유저 포인트 조회
-     * 2. 유저 포인트가 0보다 작으면 예외 발생
-     * 3. 유저 포인트 업데이트
-     * 4. 포인트 내역 저장
-     * 5. 유저 포인트 반환
+     * 1. 충전 금액 검증 (0보다 커야 함)
+     * 2. 유저 포인트 조회
+     * 3. 유저 포인트가 0보다 작으면 예외 발생
+     * 4. 유저 포인트 업데이트
+     * 5. 포인트 내역 저장
+     * 6. 유저 포인트 반환
      * @param userId
      * @param amount
      * @return
      */
     public UserPoint chargePoint(long userId, long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("충전 금액은 0보다 커야 합니다");
+        }
+        
         UserPoint userPoint = userPointTable.selectById(userId);
         if (userPoint.point() + amount < 0) {
             throw new IllegalArgumentException("잔고가 부족합니다");
         }
-        userPointTable.insertOrUpdate(userId, userPoint.point() + amount);
+        long updatedPoint = userPoint.point() + amount;
+        userPointTable.insertOrUpdate(userId, updatedPoint);
         pointHistoryTable.insert(userId, amount, TransactionType.CHARGE, System.currentTimeMillis());
-        return userPoint;
+        return new UserPoint(userId, updatedPoint, System.currentTimeMillis());
     }
 
     /* 
      * 포인트 사용
      * 
-     * 1. 유저 포인트 조회
-     * 2. 유저 포인트가 0보다 작으면 예외 발생
-     * 3. 유저 포인트 업데이트
-     * 4. 포인트 내역 저장
-     * 5. 유저 포인트 반환
+     * 1. 사용 금액 검증 (0보다 커야 함)
+     * 2. 유저 포인트 조회
+     * 3. 잔고 부족 검증
+     * 4. 유저 포인트 업데이트
+     * 5. 포인트 내역 저장
+     * 6. 유저 포인트 반환
      * 
      * @param userId
      * @param amount
      * @return
      */
-    public UserPoint usePoint(long userId, long amount) {   
+    public UserPoint usePoint(long userId, long amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("사용 금액은 0보다 커야 합니다");
+        }
+        
         UserPoint userPoint = userPointTable.selectById(userId);
         if (userPoint.point() - amount < 0) {
             throw new IllegalArgumentException("잔고가 부족합니다");
         }
-        userPointTable.insertOrUpdate(userId, userPoint.point() - amount);
+        long updatedPoint = userPoint.point() - amount;
+        userPointTable.insertOrUpdate(userId, updatedPoint);
         pointHistoryTable.insert(userId, amount, TransactionType.USE, System.currentTimeMillis());
-        return userPoint;
+        return new UserPoint(userId, updatedPoint, System.currentTimeMillis());
     }
 }

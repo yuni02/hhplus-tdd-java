@@ -17,6 +17,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -61,7 +62,7 @@ class PointServiceTest {
         
         given(userPointTable.selectById(userId)).willReturn(existingUserPoint);
         given(userPointTable.insertOrUpdate(userId, 1500L)).willReturn(expectedUserPoint);
-        given(pointHistoryTable.insert(userId, amount, TransactionType.CHARGE, anyLong()))
+        given(pointHistoryTable.insert(eq(userId), eq(amount), eq(TransactionType.CHARGE), anyLong()))
                 .willReturn(new PointHistory(1L, userId, amount, TransactionType.CHARGE, System.currentTimeMillis()));
 
         // when
@@ -73,7 +74,7 @@ class PointServiceTest {
         assertThat(result.point()).isEqualTo(1500L);
         verify(userPointTable).selectById(userId);
         verify(userPointTable).insertOrUpdate(userId, 1500L);
-        verify(pointHistoryTable).insert(userId, amount, TransactionType.CHARGE, anyLong());
+        verify(pointHistoryTable).insert(eq(userId), eq(amount), eq(TransactionType.CHARGE), anyLong());
     }
 
     @Test
@@ -87,7 +88,7 @@ class PointServiceTest {
         
         given(userPointTable.selectById(userId)).willReturn(existingUserPoint);
         given(userPointTable.insertOrUpdate(userId, 700L)).willReturn(expectedUserPoint);
-        given(pointHistoryTable.insert(userId, amount, TransactionType.USE, anyLong()))
+        given(pointHistoryTable.insert(eq(userId), eq(amount), eq(TransactionType.USE), anyLong()))
                 .willReturn(new PointHistory(1L, userId, amount, TransactionType.USE, System.currentTimeMillis()));
 
         // when
@@ -99,7 +100,7 @@ class PointServiceTest {
         assertThat(result.point()).isEqualTo(700L);
         verify(userPointTable).selectById(userId);
         verify(userPointTable).insertOrUpdate(userId, 700L);
-        verify(pointHistoryTable).insert(userId, amount, TransactionType.USE, anyLong());
+        verify(pointHistoryTable).insert(eq(userId), eq(amount), eq(TransactionType.USE), anyLong());
     }
 
     @Test
@@ -194,5 +195,33 @@ class PointServiceTest {
         assertThatThrownBy(() -> pointService.usePoint(userId, amount))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("사용 금액은 0보다 커야 합니다");
+    }
+
+    @Test
+    @DisplayName("포인트 충전 - 실제 비즈니스 로직 검증")
+    void chargePoint_ShouldReturnUpdatedPoint() {
+        // given
+        long userId = 1L;
+        long amount = 500L;
+        UserPoint existingUserPoint = new UserPoint(userId, 1000L, System.currentTimeMillis());
+        UserPoint expectedUserPoint = new UserPoint(userId, 1500L, System.currentTimeMillis());
+        
+        given(userPointTable.selectById(userId)).willReturn(existingUserPoint);
+        given(userPointTable.insertOrUpdate(userId, 1500L)).willReturn(expectedUserPoint);
+        given(pointHistoryTable.insert(eq(userId), eq(amount), eq(TransactionType.CHARGE), anyLong()))
+                .willReturn(new PointHistory(1L, userId, amount, TransactionType.CHARGE, System.currentTimeMillis()));
+        
+        // when
+        UserPoint result = pointService.chargePoint(userId, amount);
+        
+        // then
+        // 실제로 selectById로 가져온 값에서 amount를 더한 값이 반환되는지 검증
+        assertThat(result.point()).isEqualTo(existingUserPoint.point() + amount);
+        
+        // DB 업데이트가 올바른 값으로 호출되는지 검증
+        verify(userPointTable).insertOrUpdate(userId, existingUserPoint.point() + amount);
+        
+        // 히스토리 저장이 올바른 값으로 호출되는지 검증
+        verify(pointHistoryTable).insert(eq(userId), eq(amount), eq(TransactionType.CHARGE), anyLong());
     }
 } 
