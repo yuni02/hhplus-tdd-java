@@ -22,10 +22,10 @@ public class PointController {
      */
     @GetMapping("{id}")
     public UserPoint point(
-            @PathVariable long id
+            @PathVariable("id") long userId
     ) {
 
-        UserPoint userPoint = pointService.getUserPoint(id);
+        UserPoint userPoint = pointService.getUserPoint(userId);
         return userPoint;
     }
 
@@ -34,9 +34,19 @@ public class PointController {
      */
     @GetMapping("{id}/histories")
     public List<PointHistory> history(
-            @PathVariable long id
+            @PathVariable("id") long userId
     ) {
-        return List.of();
+        List<PointHistory> pointHistory = pointService.getPointHistory(userId);
+        log.info("pointHistory: {}", pointHistory);
+        log.info("pointHistory size: {}", pointHistory.size());
+        log.info("pointHistory[0]: {}", pointHistory.get(0));
+        log.info("pointHistory[0].id: {}", pointHistory.get(0).id());
+        log.info("pointHistory[0].userId: {}", pointHistory.get(0).userId());
+        log.info("pointHistory[0].amount: {}", pointHistory.get(0).amount());
+        log.info("pointHistory[0].transactionType: {}", pointHistory.get(0).type());
+        log.info("pointHistory[0].createdAt: {}", pointHistory.get(0).updateMillis());
+
+        return pointHistory;
     }
 
     /**
@@ -47,7 +57,8 @@ public class PointController {
             @PathVariable long id,
             @RequestBody long amount
     ) {
-        return new UserPoint(0, 0, 0);
+        UserPoint userPoint = pointService.chargePoint(id, amount);
+        return userPoint;
     }
 
     /**
@@ -58,6 +69,7 @@ public class PointController {
             @PathVariable long id,
             @RequestBody long amount
     ) {
-        return new UserPoint(0, 0, 0);
+        UserPoint userPoint = pointService.usePoint(id, amount);
+        return userPoint;
     }
 }
