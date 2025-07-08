@@ -10,7 +10,7 @@ public record UserPoint(
     }
 
     /**
-     * 금액 유효성 검증 - 0보다 커야 함
+     * 정책 추가 [금액 유효성 검증 - 0보다 커야 함]
      */
     public static void validateAmount(long amount) {
         if (amount <= 0) {
@@ -61,7 +61,7 @@ public record UserPoint(
     }
 
     /**
-     * 최대 충전 가능 금액 검증 (비즈니스 룰)
+     * 정책 추가 -[최대 충전 가능 금액 검증 (비즈니스 룰)]
      */
     public boolean canCharge(long amount) {
         validateAmount(amount);

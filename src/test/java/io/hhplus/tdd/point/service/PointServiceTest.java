@@ -33,17 +33,6 @@ class PointServiceTest {
     @InjectMocks
     private PointService pointService;
 
-    // 핵심 로직 위주로 집중적으로 짜기..
-    // 어떤게 핵심 로직일까?
-    // 1. 포인트 충전
-    // 2. 포인트 사용
-    // 3. 포인트 내역 조회
-    // 4. 유저 포인트 조회
-    // 5. 포인트 내역 조회
-    // 6. 유저 포인트 조회
-    // 7. 포인트 내역 조회
-    // 너무 중요한게 많은데 몇개만 추린다면?
-    // 1. 포인트 충전
 
     @Test
     @DisplayName("유저 포인트 조회 - 성공")
