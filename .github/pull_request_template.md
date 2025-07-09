@@ -37,6 +37,20 @@
 
 ### Keep
 
+. 테스트 책임 분리
+✅ 도메인 테스트 (UserPointTest, PointHistoryTest): 도메인 로직 상세 검증
+✅ 서비스 테스트 (PointServiceTest): 비즈니스 플로우와 Repository 협력 검증
+✅ 컨트롤러/통합 테스트: HTTP 레이어와 전체 플로우 검증
+
+@AutoConfigureWebMvc vs @AutoConfigureTestWebEnvironment 차이점
+@AutoConfigureWebMvc (현재 사용 중)
+Spring MVC 설정만 활성화
+MockMvc Bean은 자동 생성하지 않음
+단위 테스트용 어노테이션
+@AutoConfigureTestWebEnvironment (필요한 것)
+-Test용 Web Environment 전체 설정
+-MockMvc Bean 자동 생성
+-Integration Test용 어노테이션
 <!-- 유지해야 할 좋은 점 -->
 
 ### Problem
