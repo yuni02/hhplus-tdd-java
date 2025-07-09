@@ -146,12 +146,11 @@ class PointControllerTest {
         void usePoint_InsufficientBalance_Fail() throws Exception {
                 // given
                 long userId = 1L;
-                long amount = anyLong(); // Mockito의 ArgumentMatcher 사용
-                given(pointService.usePoint(userId, amount))
+                long amount = 10000L; // ✅ 실제 값 사용
+                given(pointService.usePoint(userId, amount)) // ✅ 모두 실제 값
                                 .willThrow(new IllegalArgumentException("잔고가 부족합니다"));
 
-                // when & then -> 여기서는 Mock 환경에서 실제 비즈니스 로직의 예외상황을 시뮬레이션하며, Controller 단에서 예외처리가
-                // 되는지 확인
+                // when & then
                 mockMvc.perform(patch("/point/{id}/use", userId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(String.valueOf(amount)))
