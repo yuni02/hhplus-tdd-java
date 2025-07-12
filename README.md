@@ -274,6 +274,8 @@ void concurrentChargeAndUse_ShouldMaintainConsistency() {
     // 예상 결과: 최종 잔고 = 초기잔고 + 총충전 - 총사용
 }
 ```
+#### 4.**동시성 스트레스 테스트**
+in-memory방식의 db를 사용할 수 밖에 없고 throttle(10); 코드로 랜덤으로 지연을 발생시켜서 100회 서비스 실행시 100회가 모두 실행되지 않아 테스트 불가함.
 
 ### 테스트 결과 검증
 
