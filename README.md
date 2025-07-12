@@ -275,17 +275,6 @@ void concurrentChargeAndUse_ShouldMaintainConsistency() {
 }
 ```
 
-#### 4. **대규모 동시성 스트레스 테스트**
-
-```java
-@Test
-@DisplayName("대규모 동시성 스트레스 테스트")
-void massiveConcurrencyStressTest() {
-    // 시나리오: 100개 스레드가 동시에 포인트 사용
-    // 검증: 정확한 성공 횟수와 데이터 일관성
-}
-```
-
 ### 테스트 결과 검증
 
 #### 핵심 검증 로직
